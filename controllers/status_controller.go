@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package controllers
 
 import (
@@ -42,7 +43,7 @@ import (
 	clustersyncer "github.com/radondb/radondb-mysql-kubernetes/cluster/syncer"
 )
 
-// reconcileTimePeriod represents the time in which a cluster should be reconciled
+//reconcileTimePeriod represents the timye in which a cluster should be reconciled
 var reconcileTimePeriod = time.Second * 5
 
 // StatusReconciler reconciles a Status object
@@ -82,9 +83,9 @@ func (r *StatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	defer func() {
 		if !reflect.DeepEqual(status, instance.Status) {
 			sErr := r.Status().Update(ctx, instance.Unwrap())
-			if sErr != nil {
-				log.Error(sErr, "failed to update cluster status")
-			}
+// 			if sErr != nil {
+// 				log.Error(sErr, "failed to update cluster status")
+// 			}
 		}
 	}()
 
