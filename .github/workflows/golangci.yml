@@ -1,0 +1,110 @@
+name: reviewdog
+on: 
+  pull_request:
+    branches: 
+      - main
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened,  review_requested, edited, ready_for_review ]
+    
+jobs:
+  # NOTE: golangci-lint doesn't report multiple errors on the same line from
+  # different linters and just report one of the errors?
+
+  golangci-lint:
+    name: runner / golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          level: warning
+          golangci_lint_flags: "--config=.github/.golangci.yml"
+          fail_on_error: true
+
+  gofumpt:
+    name: runner / gofumpt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: gofumpt
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          tool_name: "gofumpt"
+          level: error
+          golangci_lint_flags: "--disable-all -E gofumpt"
+          fail_on_error: true
+          reporter: github-pr-review
+
+  gofmt:
+    name: runner / gofmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: gofmt
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          golangci_lint_flags: "--disable-all -E gofmt"
+          tool_name: gofmt
+          level: error
+          fail_on_error: true
+
+  golint:
+    name: runner / golint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: golint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          golangci_lint_flags: "--disable-all -E golint"
+          tool_name: golint
+          level: error
+          fail_on_error: true
+
+  errcheck:
+    name: runner / errcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: errcheck
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          golangci_lint_flags: "--disable-all -E errcheck"
+          tool_name: errcheck
+          level: error
+          fail_on_error: true
+          reporter: github-pr-review
+
+  misspell:
+    name: runner / misspell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: misspell
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.github_token }}
+          golangci_lint_flags: "--disable-all -E misspell"
+          tool_name: misspell
+          level: error
+          fail_on_error: true
+          reporter: github-pr-review
+
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: reviewdog/action-actionlint@v1
